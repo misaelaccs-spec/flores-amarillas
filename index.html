@@ -3,26 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flores Amarillas para Ti 🌻</title>
+  <title>Para Elizabeth 💛 | Flores Amarillas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
-      background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+      background: radial-gradient(circle at 50% 20%, #1e130c 0%, #0a0604 100%);
       min-height: 100vh;
-      overflow: hidden;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      padding: 15px;
     }
-    #petals-canvas {
-      position: absolute;
+
+    #canvas {
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -30,192 +36,344 @@
       pointer-events: none;
       z-index: 1;
     }
-    .container {
+
+    .card {
       position: relative;
       z-index: 2;
-      text-align: center;
-      padding: 24px;
-      max-width: 500px;
-      width: 90%;
+      width: 100%;
+      max-width: 480px;
       background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 215, 0, 0.2);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 28px;
+      padding: 32px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 193, 7, 0.15);
+      text-align: center;
+      transition: all 0.5s ease;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.82rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ffd54f;
+      background: rgba(255, 213, 79, 0.12);
+      padding: 6px 14px;
       border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    }
-    h1 {
-      font-size: 1.8rem;
-      color: #ffd700;
       margin-bottom: 12px;
-      text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+      border: 1px solid rgba(255, 213, 79, 0.3);
     }
-    p {
-      font-size: 1.05rem;
-      line-height: 1.6;
-      color: #e2e8f0;
-      margin-bottom: 20px;
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.7rem;
+      color: #ffe066;
+      text-shadow: 0 0 20px rgba(255, 224, 102, 0.5);
+      margin-bottom: 8px;
+      line-height: 1.2;
     }
-    .flower-box {
-      width: 200px;
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #e0d0c0;
+      margin-bottom: 22px;
+      font-weight: 300;
+    }
+
+    /* Contenedor del Ramo */
+    .bouquet {
+      position: relative;
+      width: 260px;
       height: 250px;
       margin: 0 auto 20px;
-      position: relative;
     }
-    /* Estructura de la flor */
+
+    /* Tallos */
     .stem {
       position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 8px;
+      bottom: 15px;
+      width: 7px;
+      background: linear-gradient(to top, #1b4d1b, #43a047);
+      border-radius: 6px;
+      transform-origin: bottom center;
       height: 0;
-      background: linear-gradient(to top, #2e7d32, #66bb6a);
-      border-radius: 4px;
-      transform: translateX(-50%);
-      transition: height 1.5s ease-in-out;
+      transition: height 1.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
+
+    .stem-center {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .stem-left {
+      left: 45%;
+      transform: translateX(-50%) rotate(-20deg);
+    }
+
+    .stem-right {
+      left: 55%;
+      transform: translateX(-50%) rotate(20deg);
+    }
+
+    /* Hojas */
     .leaf {
       position: absolute;
-      width: 30px;
-      height: 16px;
-      background: #4caf50;
-      border-radius: 20px 0 20px 0;
+      width: 26px;
+      height: 14px;
+      background: #388e3c;
+      border-radius: 18px 0 18px 0;
       opacity: 0;
       transition: opacity 0.8s ease;
     }
-    .leaf.left {
-      left: -26px;
-      top: 80px;
-      transform: rotate(-25deg);
-    }
-    .leaf.right {
-      right: -26px;
-      top: 110px;
-      transform: scaleX(-1) rotate(-25deg);
-    }
-    .bloom-head {
+    .leaf.l1 { left: -20px; top: 60px; transform: rotate(-30deg); }
+    .leaf.l2 { right: -20px; top: 85px; transform: scaleX(-1) rotate(-30deg); }
+
+    /* Cabezas de flor */
+    .flower {
       position: absolute;
-      top: 20px;
-      left: 50%;
+      width: 105px;
+      height: 105px;
       transform: translate(-50%, -50%) scale(0);
-      width: 120px;
-      height: 120px;
-      transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+
+    .flower-center { top: 40px; left: 50%; z-index: 4; }
+    .flower-left { top: 75px; left: 22%; z-index: 3; filter: brightness(0.92); }
+    .flower-right { top: 75px; left: 78%; z-index: 3; filter: brightness(0.92); }
+
     .petal {
       position: absolute;
-      width: 35px;
-      height: 60px;
-      background: linear-gradient(135deg, #fff176, #fbc02d);
-      border-radius: 50% 50% 10% 10%;
       top: 50%;
       left: 50%;
+      width: 22px;
+      height: 48px;
+      background: linear-gradient(180deg, #fff59d 0%, #fbc02d 65%, #f57f17 100%);
+      border-radius: 50% 50% 20% 20%;
       transform-origin: bottom center;
-      box-shadow: 0 0 10px rgba(253, 216, 53, 0.4);
+      box-shadow: 0 0 10px rgba(251, 192, 45, 0.4);
     }
-    .center-circle {
+
+    .center-disc {
       position: absolute;
-      width: 45px;
-      height: 45px;
-      background: radial-gradient(circle, #5d4037, #3e2723);
-      border-radius: 50%;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      box-shadow: inset 0 0 5px #000;
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle, #5d4037 35%, #3e2723 85%, #271406 100%);
+      border-radius: 50%;
+      z-index: 10;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.5);
+    }
+
+    /* Cinta / Moño */
+    .ribbon {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      background: #e91e63;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 3px 12px;
+      border-radius: 12px;
       z-index: 5;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.5);
+      transition: transform 0.6s ease;
     }
-    .btn {
-      background: linear-gradient(45deg, #ffd700, #ffa000);
-      border: none;
-      padding: 12px 28px;
-      color: #1a1a1a;
-      font-weight: 700;
-      font-size: 1rem;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-      transition: all 0.3s ease;
-    }
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
-    }
-    .hidden {
+
+    /* Mensaje Romántico */
+    .letter-box {
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed rgba(255, 215, 0, 0.35);
+      border-radius: 18px;
+      padding: 18px 16px;
+      text-align: left;
+      font-size: 0.96rem;
+      line-height: 1.7;
+      color: #f7ede2;
       display: none;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .letter-box strong {
+      color: #ffe066;
+    }
+
+    .signature {
+      display: block;
+      margin-top: 12px;
+      text-align: right;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.6rem;
+      color: #ffd54f;
+    }
+
+    /* Botón */
+    .btn-magic {
+      background: linear-gradient(45deg, #fbc02d, #ffa000);
+      color: #1a1005;
+      font-weight: 700;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 34px;
+      cursor: pointer;
+      box-shadow: 0 6px 25px rgba(255, 179, 0, 0.45);
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .btn-magic:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(255, 179, 0, 0.65);
+    }
+
+    .audio-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 1.2rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <canvas id="petals-canvas"></canvas>
 
-  <div class="container">
-    <h1 id="title">¿Tienes un regalo pendiente?</h1>
-    <p id="msg">Hoy 21 de septiembre no podían faltar tus flores amarillas...</p>
+  <canvas id="canvas"></canvas>
 
-    <div class="flower-box">
-      <div class="stem" id="stem">
-        <div class="leaf left"></div>
-        <div class="leaf right"></div>
-      </div>
-      <div class="bloom-head" id="bloom">
-        <div class="center-circle"></div>
-      </div>
+  <div class="card">
+    <span class="tag">21 de Septiembre</span>
+    <h1 id="title">Para ti, Elizabeth 🌻</h1>
+    <p class="subtitle" id="subtitle">Dicen que hoy se regalan flores amarillas a las personas más especiales...</p>
+
+    <div class="bouquet">
+      <!-- Tallos -->
+      <div class="stem stem-left" id="stem-l"><div class="leaf l1"></div></div>
+      <div class="stem stem-center" id="stem-c"><div class="leaf l1"></div><div class="leaf l2"></div></div>
+      <div class="stem stem-right" id="stem-r"><div class="leaf l2"></div></div>
+
+      <!-- Flores -->
+      <div class="flower flower-left" id="flower-l"><div class="center-disc"></div></div>
+      <div class="flower flower-center" id="flower-c"><div class="center-disc"></div></div>
+      <div class="flower flower-right" id="flower-r"><div class="center-disc"></div></div>
+
+      <div class="ribbon" id="ribbon">Con amor ✨</div>
     </div>
 
-    <button class="btn" id="open-btn">Abrir mi detalle ✨</button>
-    <audio id="bg-music" loop>
-      <!-- Puedes cambiar esta URL por un archivo .mp3 directo como la de Floricienta -->
-      <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
-    </audio>
+    <button class="btn-magic" id="open-btn">Toca aquí para recibir tu ramo 💛</button>
+
+    <div class="letter-box" id="letter">
+      <strong>Mi querida Elizabeth:</strong><br>
+      Hoy no quería dejar pasar este 21 de septiembre sin hacerte llegar tus flores amarillas. Aunque estén en esta pantalla, llevan consigo todo el cariño sincero que siento por ti.<br><br>
+      Gracias por iluminar mis días con tu risa, tu bondad y tu presencia tan bonita. Ojalá este detalle te dibuje una gran sonrisa, porque te mereces todas las flores del mundo hoy y siempre.
+      <span class="signature">Feliz 21 de septiembre ❤️</span>
+    </div>
   </div>
 
+  <button class="audio-btn" id="sound-btn" title="Activar/Silenciar música">🎵</button>
+
+  <audio id="bg-music" loop preload="auto">
+    <!-- Melodía suave de piano romántico -->
+    <source src="https://cdn.pixabay.com/download/audio/2022/11/06/audio_c93a7d2b24.mp3?filename=warm-piano-flourish-126284.mp3" type="audio/mpeg">
+  </audio>
+
   <script>
-    // Generación de los 12 pétalos en círculo
-    const bloom = document.getElementById('bloom');
-    const totalPetals = 12;
-    for (let i = 0; i < totalPetals; i++) {
-      const petal = document.createElement('div');
-      petal.className = 'petal';
-      const deg = (360 / totalPetals) * i;
-      petal.style.transform = `translate(-50%, -100%) rotate(${deg}deg)`;
-      bloom.appendChild(petal);
+    // 1. Construcción de los 3 girasoles
+    function buildSunflowers(selector, petalCount = 14) {
+      const container = document.querySelector(selector);
+      for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        const rot = (360 / petalCount) * i;
+        petal.style.transform = `translate(-50%, -100%) rotate(${rot}deg)`;
+        container.appendChild(petal);
+      }
     }
+    buildSunflowers('#flower-c', 16);
+    buildSunflowers('#flower-l', 14);
+    buildSunflowers('#flower-r', 14);
 
+    // 2. Evento interactivo
     const openBtn = document.getElementById('open-btn');
-    const stem = document.getElementById('stem');
-    const leaves = document.querySelectorAll('.leaf');
-    const title = document.getElementById('title');
-    const msg = document.getElementById('msg');
+    const soundBtn = document.getElementById('sound-btn');
     const music = document.getElementById('bg-music');
+    const letter = document.getElementById('letter');
+    const ribbon = document.getElementById('ribbon');
 
-    openBtn.addEventListener('click', () => {
-      openBtn.classList.add('hidden');
-      music.play().catch(() => {});
-
-      // 1. Crece el tallo
-      stem.style.height = '170px';
-
-      // 2. Aparecen hojas
-      setTimeout(() => {
-        leaves.forEach(leaf => leaf.style.opacity = '1');
-      }, 700);
-
-      // 3. Florecen los pétalos
-      setTimeout(() => {
-        bloom.style.transform = 'translate(-50%, -50%) scale(1)';
-      }, 1400);
-
-      // 4. Cambia el mensaje
-      setTimeout(() => {
-        title.innerText = '¡Feliz 21 de Septiembre! 🌻';
-        msg.innerHTML = 'Que este día te llene de luz, sonrisas y momentos tan brillantes como estas flores.<br><strong>¡Te las mereces todas!</strong>';
-        startPetalRain();
-      }, 2000);
+    let isPlaying = false;
+    soundBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        music.pause();
+        soundBtn.textContent = '🔇';
+      } else {
+        music.play();
+        soundBtn.textContent = '🎵';
+      }
+      isPlaying = !isPlaying;
     });
 
-    // Lluvia sutil de pétalos en segundo plano con Canvas
-    const canvas = document.getElementById('petals-canvas');
+    openBtn.addEventListener('click', () => {
+      openBtn.style.display = 'none';
+
+      // Reproducir melodía
+      music.play().then(() => {
+        isPlaying = true;
+        soundBtn.style.display = 'flex';
+      }).catch(() => {
+        soundBtn.style.display = 'flex';
+        soundBtn.textContent = '🔇';
+      });
+
+      // Crecer tallos
+      document.getElementById('stem-c').style.height = '145px';
+      document.getElementById('stem-l').style.height = '115px';
+      document.getElementById('stem-r').style.height = '115px';
+
+      // Hojas
+      setTimeout(() => {
+        document.querySelectorAll('.leaf').forEach(l => l.style.opacity = '1');
+      }, 700);
+
+      // Florecer girasoles
+      setTimeout(() => {
+        document.getElementById('flower-c').style.transform = 'translate(-50%, -50%) scale(1)';
+      }, 1100);
+
+      setTimeout(() => {
+        document.getElementById('flower-l').style.transform = 'translate(-50%, -50%) scale(0.85)';
+        document.getElementById('flower-r').style.transform = 'translate(-50%, -50%) scale(0.85)';
+        ribbon.style.transform = 'translateX(-50%) scale(1)';
+      }, 1500);
+
+      // Desplegar carta y lluvia de pétalos
+      setTimeout(() => {
+        letter.style.display = 'block';
+        startPetals();
+      }, 2100);
+    });
+
+    // 3. Efecto lluvia de pétalos y brillos dorados (Canvas)
+    const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
@@ -226,29 +384,30 @@
     });
 
     const particles = [];
-    function startPetalRain() {
-      for (let i = 0; i < 40; i++) {
+    function startPetals() {
+      for (let i = 0; i < 45; i++) {
         particles.push({
           x: Math.random() * width,
-          y: Math.random() * height - height,
-          size: Math.random() * 8 + 8,
-          speedY: Math.random() * 2 + 1,
-          speedX: Math.random() * 1.5 - 0.75,
+          y: Math.random() * -height,
+          size: Math.random() * 9 + 7,
+          speedY: Math.random() * 2 + 1.2,
+          speedX: Math.random() * 1.6 - 0.8,
           angle: Math.random() * 360,
-          spin: Math.random() * 2 - 1
+          spin: Math.random() * 2 - 1,
+          color: Math.random() > 0.3 ? '#ffeb3b' : '#ffca28'
         });
       }
-      animate();
+      loop();
     }
 
-    function animate() {
+    function loop() {
       ctx.clearRect(0, 0, width, height);
       particles.forEach(p => {
         p.y += p.speedY;
-        p.x += p.speedX;
+        p.x += Math.sin(p.y * 0.015) + p.speedX;
         p.angle += p.spin;
 
-        if (p.y > height) {
+        if (p.y > height + 20) {
           p.y = -20;
           p.x = Math.random() * width;
         }
@@ -256,14 +415,14 @@
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate((p.angle * Math.PI) / 180);
-        ctx.fillStyle = '#ffeb3b';
-        ctx.globalAlpha = 0.6;
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 0.7;
         ctx.beginPath();
         ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       });
-      requestAnimationFrame(animate);
+      requestAnimationFrame(loop);
     }
   </script>
 </body>
