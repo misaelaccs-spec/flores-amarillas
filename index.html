@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flores Amarillas para Ti 🌻</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #petals-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #ffd700;
+      margin-bottom: 12px;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+    p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+    }
+    .flower-box {
+      width: 200px;
+      height: 250px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    /* Estructura de la flor */
+    .stem {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 8px;
+      height: 0;
+      background: linear-gradient(to top, #2e7d32, #66bb6a);
+      border-radius: 4px;
+      transform: translateX(-50%);
+      transition: height 1.5s ease-in-out;
+    }
+    .leaf {
+      position: absolute;
+      width: 30px;
+      height: 16px;
+      background: #4caf50;
+      border-radius: 20px 0 20px 0;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    .leaf.left {
+      left: -26px;
+      top: 80px;
+      transform: rotate(-25deg);
+    }
+    .leaf.right {
+      right: -26px;
+      top: 110px;
+      transform: scaleX(-1) rotate(-25deg);
+    }
+    .bloom-head {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 120px;
+      height: 120px;
+      transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .petal {
+      position: absolute;
+      width: 35px;
+      height: 60px;
+      background: linear-gradient(135deg, #fff176, #fbc02d);
+      border-radius: 50% 50% 10% 10%;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      box-shadow: 0 0 10px rgba(253, 216, 53, 0.4);
+    }
+    .center-circle {
+      position: absolute;
+      width: 45px;
+      height: 45px;
+      background: radial-gradient(circle, #5d4037, #3e2723);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0 0 5px #000;
+      z-index: 5;
+    }
+    .btn {
+      background: linear-gradient(45deg, #ffd700, #ffa000);
+      border: none;
+      padding: 12px 28px;
+      color: #1a1a1a;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="petals-canvas"></canvas>
+
+  <div class="container">
+    <h1 id="title">¿Tienes un regalo pendiente?</h1>
+    <p id="msg">Hoy 21 de septiembre no podían faltar tus flores amarillas...</p>
+
+    <div class="flower-box">
+      <div class="stem" id="stem">
+        <div class="leaf left"></div>
+        <div class="leaf right"></div>
+      </div>
+      <div class="bloom-head" id="bloom">
+        <div class="center-circle"></div>
+      </div>
+    </div>
+
+    <button class="btn" id="open-btn">Abrir mi detalle ✨</button>
+    <audio id="bg-music" loop>
+      <!-- Puedes cambiar esta URL por un archivo .mp3 directo como la de Floricienta -->
+      <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    // Generación de los 12 pétalos en círculo
+    const bloom = document.getElementById('bloom');
+    const totalPetals = 12;
+    for (let i = 0; i < totalPetals; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      const deg = (360 / totalPetals) * i;
+      petal.style.transform = `translate(-50%, -100%) rotate(${deg}deg)`;
+      bloom.appendChild(petal);
+    }
+
+    const openBtn = document.getElementById('open-btn');
+    const stem = document.getElementById('stem');
+    const leaves = document.querySelectorAll('.leaf');
+    const title = document.getElementById('title');
+    const msg = document.getElementById('msg');
+    const music = document.getElementById('bg-music');
+
+    openBtn.addEventListener('click', () => {
+      openBtn.classList.add('hidden');
+      music.play().catch(() => {});
+
+      // 1. Crece el tallo
+      stem.style.height = '170px';
+
+      // 2. Aparecen hojas
+      setTimeout(() => {
+        leaves.forEach(leaf => leaf.style.opacity = '1');
+      }, 700);
+
+      // 3. Florecen los pétalos
+      setTimeout(() => {
+        bloom.style.transform = 'translate(-50%, -50%) scale(1)';
+      }, 1400);
+
+      // 4. Cambia el mensaje
+      setTimeout(() => {
+        title.innerText = '¡Feliz 21 de Septiembre! 🌻';
+        msg.innerHTML = 'Que este día te llene de luz, sonrisas y momentos tan brillantes como estas flores.<br><strong>¡Te las mereces todas!</strong>';
+        startPetalRain();
+      }, 2000);
+    });
+
+    // Lluvia sutil de pétalos en segundo plano con Canvas
+    const canvas = document.getElementById('petals-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    function startPetalRain() {
+      for (let i = 0; i < 40; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height - height,
+          size: Math.random() * 8 + 8,
+          speedY: Math.random() * 2 + 1,
+          speedX: Math.random() * 1.5 - 0.75,
+          angle: Math.random() * 360,
+          spin: Math.random() * 2 - 1
+        });
+      }
+      animate();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.angle += p.spin;
+
+        if (p.y > height) {
+          p.y = -20;
+          p.x = Math.random() * width;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.angle * Math.PI) / 180);
+        ctx.fillStyle = '#ffeb3b';
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+      requestAnimationFrame(animate);
+    }
+  </script>
+</body>
+</html>
